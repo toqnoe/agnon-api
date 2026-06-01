@@ -1,0 +1,35 @@
+{
+  "name": "dropio-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node --env-file=.env src/server.js",
+    "dev": "node --watch --env-file=.env src/server.js"
+  },
+  "keywords": [],
+  "author": "Henry Amponsah",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "compression": "^1.8.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "express-async-handler": "^1.2.0",
+    "helmet": "^8.2.0",
+    "ioredis": "^5.11.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.6.2",
+    "morgan": "^1.10.1",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^5.0.0",
+    "yup": "^1.7.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.4.0",
+    "globals": "^17.6.0"
+  }
+}
