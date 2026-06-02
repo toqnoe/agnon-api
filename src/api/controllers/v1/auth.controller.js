@@ -87,6 +87,24 @@ class AuthController {
 
     res.status(200).json({ success: true, message });
   });
+
+  // LOGOUT-ALL
+
+  static logoutAll = asyncHandler(async (req, res) => {
+    const refreshToken = req.cookies?.refreshToken;
+
+    const { message, userId } = await AuthService.logoutAll(refreshToken);
+
+    clearCookie(res, "refreshToken");
+
+    logger.info(
+      userId
+        ? `User ${userId} logged out from all devices at ${req.ip} using ${req.get("User-Agent")}`
+        : "Logout from all devices request completed",
+    );
+
+    res.status(200).json({ success: true, message });
+  });
 }
 
 export default AuthController;

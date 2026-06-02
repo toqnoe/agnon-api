@@ -89,21 +89,37 @@ class AuthService {
     try {
       const decoded = await Jwt.verifyToken(refreshToken, "refresh");
 
-      // Revoke session/device
       await Jwt.revokeRefreshToken(decoded.jti);
-
-      return { message: "User logged out", userId: decoded.sub };
-    } catch (error) {
-      if (
-        error.code === "API_ERROR" ||
-        error.code === "AUTHENTICATION_ERROR" ||
-        error.code === "VALIDATION_ERROR"
-      ) {
-        return { message: "User logged out" };
-      }
-
-      return { message: "User logged out" };
+    } catch {
+      // Intentionally ignore errors so logout remains idempotent
     }
+
+    return {
+      message: "User logged out",
+    };
+  };
+
+  // LOGOUT-ALL
+
+  static logoutAll = async (refreshToken) => {
+    if (!refreshToken) {
+      return { message: "User logged out from all devices" };
+    }
+
+    try {
+      const decoded = await Jwt.verifyToken(refreshToken, "refresh");
+
+      await Promise.all([
+        Jwt.revokeRefreshToken(decoded.jti),
+        User.updateOne({ _id: decoded.sub }, { $inc: { tokenVersion: 1 } }),
+      ]);
+    } catch {
+      // Intentionally ignore errors so logout remains idempotent
+    }
+
+    return {
+      message: "User logged out from all devices",
+    };
   };
 }
 
