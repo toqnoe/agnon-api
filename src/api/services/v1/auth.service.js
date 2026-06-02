@@ -1,5 +1,6 @@
 import User from "../../models/user.model.js";
 import ApiError from "../../utils/errors/ApiError.js";
+import AuthenticationError from "../../utils/errors/AuthenticationError.js";
 import ValidationError from "../../utils/errors/ValidationError.js";
 import Jwt from "../../utils/Jwt.js";
 
@@ -49,6 +50,32 @@ class AuthService {
       message: "User logged in",
       tokens: { accessToken, refreshToken },
       data: user.toObject(),
+    };
+  };
+
+  static refresh = async (refreshToken) => {
+    if (!refreshToken) {
+      throw new AuthenticationError("Refresh token not provided");
+    }
+
+    const decoded = await Jwt.verifyToken(refreshToken, "refresh");
+
+    // Generate new tokens
+    const payload = {
+      sub: decoded.sub,
+      tokenVersion: decoded.tokenVersion,
+    };
+
+    const [newAccessToken, newRefreshToken] = await Promise.all([
+      Jwt.generateToken(payload),
+      Jwt.generateToken(payload, "refresh"),
+    ]);
+
+    await Jwt.revokeRefreshToken(decoded.jti);
+
+    return {
+      message: "Tokens refreshed",
+      tokens: { accessToken: newAccessToken, refreshToken: newRefreshToken },
     };
   };
 }

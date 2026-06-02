@@ -14,7 +14,17 @@ const setRefreshCookie = (res, value) => {
   });
 };
 
+const clearCookie = (res, name) => {
+  res.clearCookie(name, {
+    httpOnly: true,
+    secure: env.NODE_ENV === "production",
+    sameSite: env.NODE_ENV === "development" ? "lax" : "none",
+  });
+};
+
 class AuthController {
+  // REGISTER
+
   static register = asyncHandler(async (req, res) => {
     const inputData = req.body;
 
@@ -27,6 +37,8 @@ class AuthController {
 
     res.status(201).json({ success: true, message });
   });
+
+  // LOGIN
 
   static login = asyncHandler(async (req, res) => {
     const inputData = req.body;
@@ -44,6 +56,18 @@ class AuthController {
     res
       .status(200)
       .json({ success: true, message, token: tokens.accessToken, data });
+  });
+
+  // REFRESH
+
+  static refresh = asyncHandler(async (req, res) => {
+    const refreshToken = req.cookies?.refreshToken;
+
+    const { message, tokens } = await AuthService.refresh(refreshToken);
+
+    setRefreshCookie(res, tokens.refreshToken);
+
+    res.status(200).json({ success: true, message, token: tokens.accessToken });
   });
 }
 

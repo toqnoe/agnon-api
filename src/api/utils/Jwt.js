@@ -150,10 +150,7 @@ class Jwt {
         throw new AuthenticationError("Token version mismatch");
       }
 
-      return {
-        decoded,
-        user: user.toObject(),
-      };
+      return decoded;
     } catch (error) {
       if (
         error instanceof AuthenticationError ||
