@@ -5,6 +5,8 @@ import ValidationError from "../../utils/errors/ValidationError.js";
 import Jwt from "../../utils/Jwt.js";
 
 class AuthService {
+  // REGISTER
+
   static register = async (inputData) => {
     const { name, email, password } = inputData;
 
