@@ -26,6 +26,8 @@ class AuthService {
     }
   };
 
+  // LOGIN
+
   static login = async (inputData) => {
     const { email, password } = inputData;
 
