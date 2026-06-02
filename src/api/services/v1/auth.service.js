@@ -78,6 +78,33 @@ class AuthService {
       tokens: { accessToken: newAccessToken, refreshToken: newRefreshToken },
     };
   };
+
+  // LOGOUT
+
+  static logout = async (refreshToken) => {
+    if (!refreshToken) {
+      return { message: "User logged out" };
+    }
+
+    try {
+      const decoded = await Jwt.verifyToken(refreshToken, "refresh");
+
+      // Revoke session/device
+      await Jwt.revokeRefreshToken(decoded.jti);
+
+      return { message: "User logged out", userId: decoded.sub };
+    } catch (error) {
+      if (
+        error.code === "API_ERROR" ||
+        error.code === "AUTHENTICATION_ERROR" ||
+        error.code === "VALIDATION_ERROR"
+      ) {
+        return { message: "User logged out" };
+      }
+
+      return { message: "User logged out" };
+    }
+  };
 }
 
 export default AuthService;

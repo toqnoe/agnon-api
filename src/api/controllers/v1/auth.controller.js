@@ -69,6 +69,24 @@ class AuthController {
 
     res.status(200).json({ success: true, message, token: tokens.accessToken });
   });
+
+  // LOGOUT
+
+  static logout = asyncHandler(async (req, res) => {
+    const refreshToken = req.cookies?.refreshToken;
+
+    const { message, userId } = await AuthService.logout(refreshToken);
+
+    clearCookie(res, "refreshToken");
+
+    logger.info(
+      userId
+        ? `User ${userId} logged out at ${req.ip} using ${req.get("User-Agent")}`
+        : "Logout request completed",
+    );
+
+    res.status(200).json({ success: true, message });
+  });
 }
 
 export default AuthController;
