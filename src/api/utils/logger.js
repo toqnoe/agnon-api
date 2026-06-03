@@ -95,15 +95,19 @@ const logger = winston.createLogger({
   level: "http",
   transports: [
     new winston.transports.Console({ format: formats.console }),
-    new DailyRotateFile({
-      format: formats.file,
-      dirname: LOG_DIR,
-      datePattern: "YYYY-MM-DD",
-      filename: "%DATE%.log",
-      zippedArchive: true,
-      maxFiles: "7d",
-      maxSize: "20m",
-    }),
+    ...(process.env.NODE_ENV === "development"
+      ? [
+          new DailyRotateFile({
+            format: formats.file,
+            dirname: LOG_DIR,
+            datePattern: "YYYY-MM-DD",
+            filename: "%DATE%.log",
+            zippedArchive: true,
+            maxFiles: "7d",
+            maxSize: "20m",
+          }),
+        ]
+      : []),
   ],
 });
 
