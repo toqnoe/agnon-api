@@ -60,8 +60,10 @@ class Jwt {
       // Match this with JWT_REFRESH_EXPIRES
       const refreshTtl = 60 * 60 * 24 * 7;
 
-      // Store refresh token in Redis
-      await redis.set(`refresh:${jti}`, payload.sub, "EX", refreshTtl);
+      // Store refresh token in Redis (Redis v4 syntax)
+      await redis.set(`refresh:${jti}`, String(payload.sub), {
+        EX: refreshTtl,
+      });
 
       logger.info("Refresh token stored in Redis");
 
@@ -136,7 +138,7 @@ class Jwt {
       // Check Redis session
       const stored = await redis.get(`refresh:${decoded.jti}`);
 
-      if (!stored || stored !== decoded.sub) {
+      if (!stored || stored !== String(decoded.sub)) {
         throw new AuthenticationError("Token revoked");
       }
 
