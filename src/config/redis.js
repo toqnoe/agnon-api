@@ -1,22 +1,25 @@
-import Redis from "ioredis";
+import { createClient } from "redis";
 import env from "./env.js";
 import logger from "../api/utils/logger.js";
 
-const redis = new Redis({
-  host: env.REDIS_HOST,
-  port: env.REDIS_PORT,
-});
-
-redis.on("connecting", () => {
-  logger.info("Redis connecting...");
+const redis = createClient({
+  username: env.REDIS_USERNAME,
+  password: env.REDIS_PASSWORD,
+  socket: {
+    host: env.REDIS_HOST,
+    port: env.REDIS_PORT,
+  },
 });
 
 redis.on("connect", () => {
-  logger.info("Redis connected");
+  logger.info("Redis connecting...");
 });
 
-redis.on("error", (error) => {
-  logger.error(`Error connecting to redis. ${error.message}`, { error });
+redis.on("error", (err) => {
+  logger.error("Redis Client Error", err);
 });
+
+await redis.connect();
+logger.info("Redis connected");
 
 export default redis;

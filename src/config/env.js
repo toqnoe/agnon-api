@@ -1,6 +1,12 @@
 import logger from "../api/utils/logger.js";
 
-const required = ["DATABASE_URI", "JWT_ACCESS_SECRET", "JWT_REFRESH_SECRET"];
+const required = [
+  "DATABASE_URI",
+  "JWT_ACCESS_SECRET",
+  "JWT_REFRESH_SECRET",
+  "REDIS_USERNAME",
+  "REDIS_PASSWORD",
+];
 
 required.forEach((var_) => {
   if (!process.env[var_] || process.env[var_] === "") {
@@ -21,6 +27,8 @@ const env = {
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
   JWT_REFRESH_EXPIRES: process.env.JWT_REFRESH_EXPIRES || "7d",
 
+  REDIS_USERNAME: process.env.REDIS_USERNAME,
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD,
   REDIS_HOST: process.env.REDIS_HOST || "127.0.0.1",
   REDIS_PORT: Number(process.env.REDIS_PORT || 6379),
 };
