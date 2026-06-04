@@ -1,32 +1,22 @@
-import { createClient } from "redis";
+import Redis from "ioredis";
 import env from "./env.js";
 import logger from "../api/utils/logger.js";
 
-const redisConfig =
-  env.NODE_ENV === "production"
-    ? {
-        username: env.REDIS_USERNAME,
-        password: env.REDIS_PASSWORD,
-        socket: {
-          host: env.REDIS_HOST,
-          port: env.REDIS_PORT,
-        },
-      }
-    : {
-        url: "redis://127.0.0.1:6379",
-      };
+const REDIS_URL =
+  env.NODE_ENV === "production" ? env.REDIS_CLOUD_URL : env.REDIS_LOCAL_URL;
 
-const redis = createClient(redisConfig);
+const redis = new Redis(REDIS_URL);
+
+redis.on("connecting", () => {
+  logger.info("Redis connecting...");
+});
 
 redis.on("connect", () => {
-  logger.info("Redis connecting...");
+  logger.info("Redis connected");
 });
 
 redis.on("error", (err) => {
   logger.error("Redis Client Error", err);
 });
-
-await redis.connect();
-logger.info("Redis connected");
 
 export default redis;

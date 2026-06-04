@@ -61,11 +61,9 @@ class Jwt {
       const refreshTtl = 60 * 60 * 24 * 7;
 
       // Store refresh token in Redis (Redis v4 syntax)
-      await redis.set(`refresh:${jti}`, String(payload.sub), {
-        EX: refreshTtl,
-      });
+      await redis.set(`refresh:${jti}`, String(payload.sub), "EX", refreshTtl);
 
-      logger.info("Refresh token stored in Redis");
+      logger.info(`Refresh token jti:${jti} stored in Redis`);
 
       return token;
     } catch (error) {
@@ -181,7 +179,7 @@ class Jwt {
   static async revokeRefreshToken(jti) {
     await redis.del(`refresh:${jti}`);
 
-    logger.info("Refresh token deleted");
+    logger.info(`Refresh token jti:${jti} deleted`);
   }
 }
 
